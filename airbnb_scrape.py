@@ -1,8 +1,6 @@
 # Import necessary packages
-#pip install selenium
-#pip install pandas
 
-import requests
+
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -10,7 +8,6 @@ from selenium.webdriver.chrome.options import Options
 
 import time
 
-import pandas as pd
 import csv
 
 AIRBNB_LINK_1 = 'https://www.airbnb.co.uk/rooms/33090114?source_impression_id=p3_1632322518_zv%2FqxckI7Ri8mMRE&check_in=2021-09-26&guests=1&adults=1&check_out=2021-09-27'
@@ -18,9 +15,17 @@ AIRBNB_LINK_2 = 'https://www.airbnb.co.uk/rooms/50633275?source_impression_id=p3
 
 
 def create_amenities_url(link_href):
+    """Extract URL to scrape listing Amenties"""
+    
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--blink-settings=imagesEnabled=false')
+    chrome_options.add_argument("window-size=1200x600")
+    chrome_options.add_argument('--no-sandbox')
+    
     url = 'https://www.airbnb.co.uk'
     
-    wd = webdriver.Chrome()
+    wd = webdriver.Chrome(options=chrome_options)
 
     try:
         wd.get(link_href)
@@ -43,7 +48,7 @@ def create_amenities_url(link_href):
 
 
 def extract_amenities(listing):
-    "Extract amenities from link"
+    "Extract amenities from created link"
 
     amenities_url = create_amenities_url(listing)
 
@@ -139,4 +144,4 @@ def write_file(airbnb_dict):
 
 if __name__ == "__main__":
     scraped_dict = extract_soup_js(AIRBNB_LINK_1)
-    df = write_file(scraped_dict, optn='pd')
+    write_file(scraped_dict)
